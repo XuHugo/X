@@ -1,4 +1,15 @@
-# -*- coding:utf-8 -*-
+#!/usr/bin/env python
+# encoding: utf-8
+'''
+@author: xuqiang
+@license: (C) Copyright 2013-2022.
+@contact: xq-310@163.com
+@software: wallet
+@file: eth_update.py.py
+@time: 2019/6/1 上午9:41
+@desc:
+'''
+
 from db.eth_db  import EthDb
 from rpc.eth_rpc_client  import EthRpcClient
 from common.tools import *
