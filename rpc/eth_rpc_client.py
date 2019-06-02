@@ -13,7 +13,7 @@
 from web3 import Web3,HTTPProvider
 from web3.auto import w3
 from common.tools import *
-from config import *
+from common.config import *
 
 class EthRpcClient(object):
 

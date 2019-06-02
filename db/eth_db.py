@@ -9,12 +9,12 @@
 @time: 2019/6/1 上午9:41
 @desc:
 '''
-from  db.db import Db
+from  db.db_base import Db
 
 class EthDb(Db):
 
-    def __init__(self):
-        super(EthDb, self).__init__()
+    def __init__(self, coin_type="eth"):
+        super(EthDb, self).__init__(coin_type if coin_type else 'eth')
 
     def getBlockHashByNumber(self, number):
         try:
@@ -45,3 +45,7 @@ class EthDb(Db):
         sql = sql % ",".join(["%s"] * 6)
         self.execute(sql, height, size, timestamp, hash, previous, state)
         pass
+
+if  __name__=="__main__":
+
+    pass

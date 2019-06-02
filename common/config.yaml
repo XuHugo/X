@@ -1,0 +1,19 @@
+
+coin:
+  - eth
+
+mysql-eth:
+  host: 127.0.0.1
+  port: 3306
+  user: root
+  password: 123456xq
+  db: eth_info
+  charset: ascii
+  unicode: True
+
+eth-rpc:
+  host: https://mainnet.infura.io/v3/19de6a4c0ccb416287b18bc81fa0b3b1
+  port:
+  way:  infura
+
+
