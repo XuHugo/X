@@ -40,9 +40,9 @@ class RpcConfig(object):
     def __init__(self):
         self.config = config
         self.cfg = {}
-        for coin_type in CoinConfig().coin_types:
+        for coin_type in config['coin']:
             section = coin_type + '-rpc'
-            self.cfg[coin_type] = self.config.get(section, None)
+            self.cfg[coin_type] = self.config[section]
 
     def set_coin_type(self, coin_type='eth'):
         section = coin_type + '-rpc'
