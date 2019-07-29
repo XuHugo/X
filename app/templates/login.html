@@ -1,0 +1,11 @@
+<!doctype html>
+<title>XToken Login </title>
+<h1>Login</h1>
+{% with messages = get_flashed_messages() %}
+    <div>{{ messages[0] }}</div>
+{% endwith %}
+<form action="{{ url_for('bp_login.login') }}" method="POST">
+    <input type="text" name="username" id="username" placeholder="Username"></input>
+    <input type="password" name="password" id="password" placeholder="Password"></input>
+    <input type="submit" name="submit"></input>
+</form>

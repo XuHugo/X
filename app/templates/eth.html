@@ -1,0 +1,73 @@
+<html>
+  <head>
+    {% if title %}
+    <title>{{title}} - X</title>
+    {% else %}
+    <title>Welcome to X</title>
+    {% endif %}
+      <link rel="stylesheet" type="text/css" href="static/css/eth.css" />
+  </head>
+  <body>
+  <div>X: <a href="/index">Home</a></div>
+    <hr>
+  <p>
+    <h1>The future is already here – it's just not evenly distributed.</h1>>
+</p>
+<h2>Hi, {{user.nickname}}!</h2>
+<hr />
+<p>
+    this is etherum!!!
+</p>
+
+  </div>
+<div id="menu">
+    <label for="menu">Menu</label>
+<select id="network">
+  <option value="main" selected="selected">Main</option>
+  <option value="ropsten">Ropsten</option>
+  <option value="kovan">Kovan</option>
+  <option value="rinkeby">Rinkeby</option>
+</select>
+</div>
+
+
+    <div id="key">key
+        <label class="text-xs-center">Seed</label>
+    <form>
+        <div class="form-group">
+            <label for="seed">Enter 12-word seed</label>
+            <input type="text" style="width:480px;" class="form-control" id="seed">
+        </div>
+        <button type="button"class="btn btn-primary" onclick="generate_address()">Show Address</button>
+    </form>
+    </div>
+
+    <div id="container">
+    <div class="send">send
+        <hr>
+        <label for="from_address">From address</label>
+        <input type="text" style="width:480px;" class="form-control" id="from_address">
+        <label for="to_address">To address(or Token address)</label>
+        <input type="text" style="width:480px;" class="from-control" id="to_address">
+        <label for="gas_price">Gas Price(Gwei)</label>
+        <input type="text" style="width:480px;" class="from-control" id="gas_price">
+        <label for="gas">Gas</label>
+        <input type="text" style="width:480px;" class="from-control" id="gas">
+        <label for="data">Token data</label>
+        <input type="text" style="width:480px;" class="from-control" id="data">
+        <label for="amount">Token value</label>
+        <input type="text" style="width:480px;" class="from-control" id="amount">
+        <label for="ether">Ether</label>
+        <input type="text" class="from-control" id="ether">
+        <button type="button" class="btn btn-primary" onclick="send_ether()">Send Ether</button>
+    </div>
+    <div class="txs">txs</div>
+    </div>
+        <script src="static/js/web3.min.js"></script>
+        <script src="static/js/hooked-web3-provider.min.js"></script>
+        <script src="static/js/lightwallet.min.js"></script>
+        <script src="static/js/main.js"></script>
+</body>
+</html>
+
+
