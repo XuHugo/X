@@ -58,7 +58,7 @@ function generate_address(seed)
             var private_key = ks.exportPrivateKey(address,pwDerivedKey);
             var balance = web3.eth.getBalance("0x"+address);
             html = html + "<li>";
-            html = html + "<p><b>Address:</b>0x"+ address+ "</p>";
+            html = html + "<p>Address:0x"+ address+ "</p>";
             html = html + "<p><b>Private Key:</b>0x" + private_key + "</p>";
             html = html + "<p><b>Balance:</b>"+web3.fromWei(balance,"ether")+"ether</p>";
             html = html + "</li>";
