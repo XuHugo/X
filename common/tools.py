@@ -10,8 +10,11 @@
 @desc:
 '''
 
+
+
 import logging
 from logging.handlers import RotatingFileHandler
+from decimal import Decimal, ROUND_DOWN
 
 logger = logging.getLogger("")
 
@@ -27,3 +30,9 @@ def set_log_file_name(file_name):
     Rthandler.setFormatter(formatter)
 
     logging.getLogger("").addHandler(Rthandler)
+
+def format_value(v, d):
+    r = (Decimal(v) / Decimal(d)).quantize(Decimal('.00000001'), ROUND_DOWN)
+    return r
+
+

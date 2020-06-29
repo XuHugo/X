@@ -10,6 +10,7 @@
 @desc:
 '''
 from  db.db_base import Db
+from decimal import Decimal, ROUND_DOWN,getcontext
 
 class EthDb(Db):
 
@@ -87,17 +88,35 @@ class EthDb(Db):
         try:
             sql = "insert into tx_record(`nonce`, `from`, `blockHash`, `raw`, " \
                   "`rsv`,`gas`, `value`, `blockNumber`, `to`, `input`, `publicKey`, " \
-                  "`transactionIndex`, `hash`, `gasPrice`, `gasUsed`, `status`, `time`," \
-                  "`mark_state`, `fee`) values(%s) on duplicate key update time=values(time), " \
-                  "status=values(status), mark_state=values(mark_state)"
+                  "`transactionIndex`, `hash`, `gasPrice`, `gasUsed`, `status`, " \
+                  "`mark_state`, `fee`) values(%s) on duplicate key update time=now(), raw=values(raw)," \
+                  "status=values(status), mark_state=values(mark_state),blockHash=values(blockHash),"\
+                  "rsv=values(rsv),gas=values(gas),blockNumber=values(blockNumber),input=values(input)," \
+                  "publicKey=values(publicKey),transactionIndex=values(transactionIndex),gasUsed=values(gasUsed),fee=values(fee)"
             sql = sql % ",".join(["%s"] * 19)
             ret = self.execute(sql, params["nonce"], params["from"],
                          params["blockHash"], params["raw"], params["rsv"],params["gas"],
                          params["value"], params["blockNumber"], params["to"], params["hex_input"],
                          params["publicKey"], params["transactionIndex"], params["hash"], params["gasPrice"],
-                         params["gasUsed"], params["status"], params["block_timestamp"], 1, params["fee"])
+                         params["gasUsed"], params["status"], params["mark_state"], params["fee"])
             return ret
         except:
+            return False
+        pass
+
+    def insert_tx_record_first(self, params):
+        try:
+            sql = "insert into tx_record(`nonce`, `from`, " \
+                  "`value`,`to`, `hash`, `gasPrice`, " \
+                  "`mark_state`,`is_token`) values(%s) on duplicate key update  " \
+                  " mark_state=values(mark_state)"
+            sql = sql % ",".join(["%s"] * 8)
+            ret = self.execute(sql, params["nonce"], params["from"],
+                               params["value"],  params["to"], params["hash"],
+                               params["gasPrice"],params["mark_state"],params["is_token"])
+            return ret
+        except Exception as e:
+            print(e)
             return False
         pass
 
@@ -144,6 +163,25 @@ class EthDb(Db):
         except Exception as e:
             return False
 
+    def get_token_balance(self, contract_addr, addr):
+        try:
+            self.execute("select * from token_balance where `contract_addr` = %s and `addr`= %s", contract_addr, addr)
+            ret = self.fetchone()
+            return ret
+        except Exception as e:
+
+            return False
+
+    def get_tx_address(self, address):
+        try:
+            self.execute("select * from tx_record where `from` = %s or `to` = %s", address.lower(),address.lower())
+            ret = self.fetchall()
+            if ret:
+                return ret
+            return False
+        except Exception as e:
+            return False
+
     def insert_token_balance_tx_record(self, params):
         try:
             sql = "insert into token_balance(addr, contract_addr, balance, decimals, added,unconfirm_amount) values(%s) on " \
@@ -172,6 +210,28 @@ class EthDb(Db):
             return False
         pass
 
+    def insert_tokentx_first(self, params):
+        try:
+            sql = "insert into token_tx(`from_addr`, `to_addr`, `amount`, `tx_hash`, `contract_addr`, " \
+                  "`decimals`, nonce) values(%s) on duplicate key update update_time=now()"
+            sql = sql % ",".join(["%s"] * 7)
+            ret = self.execute(sql, params["token_addr_from"], params["token_addr_to"], params["token_amount"],
+                         params["tx_hash"], params["contract_addr"], params["token_decimals"],params["nonce"])
+            return ret
+        except Exception as e:
+            return False
+        pass
+
+    def get_token_address(self, address, contract):
+        try:
+            self.execute("select * from token_tx where `from_addr` = %s and `contract_addr` = %s or `to_addr` = %s and `contract_addr` = %s", address.lower(), contract.lower(),address.lower(), contract.lower())
+            ret = self.fetchall()
+            if ret:
+                return ret
+            return False
+        except Exception as e:
+            return False
+
     def update_tx_record(self, param):
         try:
             sql = "update tx_record set is_token=1 where hash=%s"
@@ -181,13 +241,72 @@ class EthDb(Db):
             return False
         pass
 
+    def insert_address_new(self, wallet_id, addr, nonce, amount, balance,t_type=99, platform=1):
+        try:
+            sql = "insert into address (wallet_id, addr,  nonce, amount,balance,addr_type, platform) values(%s) " \
+                  "on DUPLICATE KEY UPDATE update_time=now(), addr_type=values(addr_type)," \
+                  "platform=values(platform)"
+            sql = sql % ",".join(["%s"] * 7)
+            ret = self.execute(sql, wallet_id, addr, nonce, amount,balance,t_type, platform)
+            return ret
+        except Exception as e:
+            print(e)
+            return False
+
+    def check_address_exist(self, addr):
+        try:
+            sql = "select * from address where addr=%s"
+            ret = self.execute(sql, addr)
+            ret = self.fetchone()
+            if ret:
+                return ret
+            else:
+                return False
+        except Exception as e:
+
+            return False
+
+
 if  __name__=="__main__":
     db = EthDb()
-    db.getParentHashByNumber(7894481)
-    addr="0x2683b857043c011c5ee9610f878a191a3b76461e"
-    ret = db.related_to_user(addr)
-    print(ret)
-    p={'nonce': 190, 'raw': 'raw', 'fee': 42000000000000, 'value': 53376000000000, 'gasUsed': 21000, 'status': 1, 'from': '0x2683b857043c011c5ee9610f878a191a3b76461e', 'to': '0xc03eaa21257e257cdf64e92ce6799c946af6f233', 'blockHash': '0x203367ec08821f7057cb477df0754bf18537a52379e6529211d738e4475554cc', 'rsv': '0x803955c9eb6d4d9cd4e9f2e9259df461fc8230bc7d4ce4f6ba33fa1e4fe29adc%0x7f95a3f70ce433df82d148ad023a3b9b009da2d652e069f1672e2b1d834f43d6%37', 'gas': 21000, 'blockNumber': 7894481, 'hex_input': '0x', 'publicKey': 'publicKey', 'transactionIndex': 66, 'hash': '0x4c8b372dbecbaf3dad7b99a32e5f4d3852d453720dfab35c66a083a670524a0a', 'gasPrice': 2000000000, 'block_timestamp': 1}
-    r=db.insert_tx_record(p)
-    print(r)
-    pass
+    #db.getParentHashByNumber(7894481)
+    # addr="0x2683b857043c011c5ee9610f878a191a3b76461e"
+    # ret = db.related_to_user(addr)
+    # print(ret)
+    # p={'nonce': 190, 'raw': 'raw', 'fee': 42000000000000, 'value': 53376000000000, 'gasUsed': 21000, 'status': 1, 'from': '0x2683b857043c011c5ee9610f878a191a3b76461e', 'to': '0xc03eaa21257e257cdf64e92ce6799c946af6f233', 'blockHash': '0x203367ec08821f7057cb477df0754bf18537a52379e6529211d738e4475554cc', 'rsv': '0x803955c9eb6d4d9cd4e9f2e9259df461fc8230bc7d4ce4f6ba33fa1e4fe29adc%0x7f95a3f70ce433df82d148ad023a3b9b009da2d652e069f1672e2b1d834f43d6%37', 'gas': 21000, 'blockNumber': 7894481, 'hex_input': '0x', 'publicKey': 'publicKey', 'transactionIndex': 66, 'hash': '0x4c8b372dbecbaf3dad7b99a32e5f4d3852d453720dfab35c66a083a670524a0a', 'gasPrice': 2000000000, 'block_timestamp': 1}
+    # r=db.insert_tx_record(p)
+    # print(r)
+    # addr = "0xfc30d103a7984ecdac8bd7498ecba700c158827d"
+    # addr2 = "0x5341ae85a5d67fa32d25b26ed4ef5427f4644d8f"
+    # r = db.check_address_exist(addr)
+    # balance = r.get("amount")
+    # nonce = r.get("nonce")
+    # print("user already exist!", nonce, balance)
+    # print(type(balance))
+    # items= db.get_tx_address("0xfc30d103a7984ecdac8bd7498ecba700c158827d")
+    # infos = []
+    # for item in items:
+    #     tx = {}
+    #     tx["to"] = item["to"]
+    #     tx["hash"] = item["hash"]
+    #     tx["nonce"] = item["nonce"]
+    #     tx["value"] = item["value"]
+    #     tx["time"] = item["time"]
+    #     tx["state"] = item["mark_state"]
+    #     infos.append(tx)
+    # print('ssss:', len(infos))
+    # result = {"result": infos}
+
+
+    # a = (balance.quantize(Decimal('0.000000000')))
+    # print(type(a), a)
+    # print("!!!!!!")
+    # b=int(a)
+    # print(type(b),b)
+    # r = (b * (10.0 ** 18))
+    # print(type(r), r)
+    token="0x33c33815a9dca51232578b30e7e0d222b57ea3ca"
+    addr="0x9ca53a80ebd1d28b78f43a50e74e527284196af5"
+    tb = db.get_token_address( addr,token)
+    print(tb)
+

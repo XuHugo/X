@@ -12,7 +12,8 @@ mysql-eth:
   unicode: True
 
 eth-rpc:
-  host: https://mainnet.infura.io/v3/19de6a4c0ccb416287b18bc81fa0b3b1
+  #host: https://mainnet.infura.io/v3/19de6a4c0ccb416287b18bc81fa0b3b1
+  host: https://ropsten.infura.io/v3/19de6a4c0ccb416287b18bc81fa0b3b1
   port:
   way:  infura
 

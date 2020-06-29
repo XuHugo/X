@@ -169,7 +169,8 @@ class EthBlockUpdater(object):
             params["transactionIndex"]=tx_receipt['transactionIndex']
             params["hash"]= transaction["hash"].hex()
             params["gasPrice"]=transaction["gasPrice"]
-            params["block_timestamp"]=1
+            params["mark_state"]=2 #从链上更新下来的=2
+            #params["block_timestamp"]=1
             #print(params)
 
             if any([user_from, user_to]):
@@ -290,7 +291,7 @@ class EthBlockUpdater(object):
         from_token_balance_params = dict(
             addr=token_addr_from,
             balance=from_balance,
-            contract_addr=contract_addr,
+            contract_addr=contract_addr.lower(),
             unconfirm_amount=0,
             decimals=token_decimals,
             added="1",
@@ -299,7 +300,7 @@ class EthBlockUpdater(object):
         to_token_balance_params = dict(
             addr=token_addr_to,
             balance=to_balance,
-            contract_addr=contract_addr,
+            contract_addr=contract_addr.lower(),
             unconfirm_amount=0,
             decimals=token_decimals,
             added="1",
@@ -318,7 +319,6 @@ class EthBlockUpdater(object):
         # 根据erc20标志，token交易都会出发transfer事件，
         for log in tx_receipt["logs"]:
             try:
-
                 if log["topics"] and log["topics"][0].hex() == _TRANSACTION_TOPIC:
                     contract_addr = log["address"]
 
@@ -361,5 +361,10 @@ class EthBlockUpdater(object):
 
 if  __name__=="__main__":
     p = EthBlockUpdater(7894473)
-    p.update()
+    contract_addr="0x33C33815A9dca51232578b30e7e0D222b57ea3cA"
+    addr="fc30d103a7984ecdac8bd7498ecba700c158827d"
+    __token_call = p.rpc.call
+    bal = __token_call({"to": contract_addr, "data": _GET_BALANCE + addr})
+    #p.update()
+    print(bal)
     pass

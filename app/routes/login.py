@@ -40,10 +40,14 @@ def login():
             login_user(curr_user, remember=True)
 
             next = request.args.get('next')
-            return redirect(next or url_for('bp_views.index'))
+            #return redirect(next or url_for('bp_views.index'))
+            #return redirect(url_for('bp_eth.eth'))
+            return render_template('index.html')
 
         flash('wrong username or password !!!')
-    return render_template('login.html')
+    #return render_template('login.html')
+    return render_template('index.html')
+
 
 @bp_login.route('/logout')
 def logout():

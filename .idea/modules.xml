@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$USER_HOME$/Downloads/eth-webwallet-master/.idea/00-wallet.iml" filepath="$USER_HOME$/Downloads/eth-webwallet-master/.idea/00-wallet.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/X.iml" filepath="$PROJECT_DIR$/.idea/X.iml" />
       <module fileurl="file://D:/python/scrapy/example/.idea/example.iml" filepath="D:/python/scrapy/example/.idea/example.iml" />
     </modules>

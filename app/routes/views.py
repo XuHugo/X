@@ -21,8 +21,9 @@ bp_views = Blueprint('bp_views', __name__)
 def index():
     user = {'nickname':'xq'}
     if request.method == 'POST':
-        #print(request.form.to_dict())
+        print(request.form.to_dict())
         coin = request.form.to_dict()
+        print(request.json)
         if coin["COINTYPE"] == "eth":
             return redirect(url_for('bp_eth.eth'))
     return render_template("index.html",

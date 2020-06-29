@@ -15,6 +15,8 @@ from flask_login import LoginManager
 from app.routes.login import  bp_login
 from app.routes.views import  bp_views
 from app.routes.eth import  bp_eth
+from app.routes.user import  bp_user
+from app.routes.token import  bp_token
 
 app = Flask(__name__)
 app.config.from_object('config')
@@ -36,5 +38,6 @@ def load_user(id):
 app.register_blueprint(bp_login)
 app.register_blueprint(bp_views)
 app.register_blueprint(bp_eth)
-
+app.register_blueprint(bp_user)
+app.register_blueprint(bp_token)
 from app.routes import views
